@@ -1,22 +1,5 @@
-/*
- * music player command (mpc)
- * Copyright 2003-2021 The Music Player Daemon Project
- * http://www.musicpd.org
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright The Music Player Daemon Project
 
 #include "options.h"
 #include "config.h"
@@ -33,6 +16,11 @@
 #define ERROR_BAD_ARGUMENT      0x02
 #define ERROR_GOT_ARGUMENT      0x03
 #define ERROR_MISSING_ARGUMENT  0x04
+
+enum ShortOption {
+	OPTION_NONE,
+	OPTION_WITH_PRIO,
+};
 
 struct OptionDef {
 	int shortopt;
@@ -60,6 +48,7 @@ static const struct OptionDef option_table[] = {
 	{ 'w', "wait", NULL, "Wait for operation to finish (e.g. database update)" },
 	{ 'r', "range", "[<start>]:[<end>]", "Operate on a range (e.g. when loading a playlist)" },
 	{ 'a', "partition", "<name>", "Operate on partition <name> instead" },
+	{ OPTION_WITH_PRIO, "with-prio", NULL, "Show only songs that have a non-zero priority" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -179,6 +168,10 @@ handle_option(int c, const char *arg)
 		ParseRange(&options.range, arg);
 		break;
 
+	case OPTION_WITH_PRIO:
+		options.with_prio = true;
+		break;
+
 	default: // Should never be reached, due to lookup_*_option functions
 		fprintf(stderr, "Unknown option %c = %s\n", c, arg);
 		exit(EXIT_FAILURE);
@@ -191,7 +184,7 @@ print_option_help(void)
 {
 	for (unsigned i = 0; i < option_table_size; i++) {
 		int remaining = 28;
-		if (option_table[i].shortopt) {
+		if (option_table[i].shortopt > 0x20) {
 			printf("  -%c, ", option_table[i].shortopt);
 			remaining -= 4;
 		} else

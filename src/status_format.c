@@ -1,24 +1,8 @@
-/*
- * music player command (mpc)
- * Copyright 2003-2020 The Music Player Daemon Project
- * http://www.musicpd.org
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if offt, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright The Music Player Daemon Project
 
 #include "status_format.h"
+#include "audio_format.h"
 #include "format.h"
 #include "charset.h"
 #include "util.h"
@@ -115,12 +99,7 @@ status_value(const struct mpd_status *status, const char *name)
 	} else if (strcmp(name, "audioformat") == 0) {
 		const struct mpd_audio_format *af = mpd_status_get_audio_format(status);
 		if (af != NULL) {
-			if (af->bits == MPD_SAMPLE_FORMAT_FLOAT)
-				snprintf(buffer, sizeof(buffer), "%u:f:%u", af->sample_rate, af->channels);
-			else if (af->bits == MPD_SAMPLE_FORMAT_DSD)
-				snprintf(buffer, sizeof(buffer), "%u:dsd:%u", af->sample_rate, af->channels);
-			else
-				snprintf(buffer, sizeof(buffer), "%u:%u:%u", af->sample_rate, af->bits, af->channels);
+			format_audio_format(buffer, sizeof(buffer), af);
 		} else {
 			return NULL;
 		}

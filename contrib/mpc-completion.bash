@@ -30,7 +30,7 @@ _mpc_playlists () {
 	if [ -z "$cur" ]; then
 		COMPREPLY=($(mpc lsplaylists | __escape_strings_stdin))
 	else
-		COMPREPLY=($(mpc loadtab $(eval echo "$cur") | __escape_strings_stdin))
+		COMPREPLY=($(mpc loadtab -- "$cur" | __escape_strings_stdin))
 	fi
 }
 
@@ -51,19 +51,20 @@ _mpc_commands () {
 _mpc_add () {
 	local IFS=$'\n'
 	__get_long_cur
-	COMPREPLY=($(mpc tab "$(eval echo \"$cur\")" | sed -re "s%^(${cur}[^/]*/?).*%\\1%" | sort -u | __escape_strings_stdin))
+	local escaped=$(echo -- "$cur" | __escape_strings_stdin)
+	COMPREPLY=($(mpc tab -- "$cur" | sed -re "s%^(${escaped}[^/]*/?).*%\\1%" | sort -u | __escape_strings_stdin))
 }
 
 # Complete the ls command (directories)
 _mpc_ls () {
-	local success IFS=$'\n'
+	local IFS=$'\n'
 	__get_long_cur
 	if [ -z "$cur" ]; then
-		COMPREPLY=($(mpc ls | sed 's@$@/@' | __escape_strings_stdin))
+		COMPREPLY=($(mpc ls -f %file% | sed 's@$@/@' | __escape_strings_stdin))
 	else
-		COMPREPLY=($(mpc ls $(eval echo "$cur") 2> /dev/null | __escape_strings_stdin))
+		COMPREPLY=($(mpc ls -f %file% -- "$cur" 2> /dev/null | __escape_strings_stdin))
 		if [ ${#COMPREPLY[*]} -eq 0 ]; then
-			COMPREPLY=($(mpc lstab $(eval echo "$cur") | __escape_strings_stdin))
+			COMPREPLY=($(mpc lstab -- "$cur" | __escape_strings_stdin))
 		fi
 	fi
 }

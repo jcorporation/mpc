@@ -14,7 +14,10 @@ given, the current status is printed (same as ":samp:`mpc status`").
 Synopsis
 --------
 
- mpc [options] <command> [<arguments>]
+ mpc [options] <command> [--] [<arguments>]
+
+After ``--``, all parameters are considered to be arguments, not
+options, even if they start with a dash.
 
 
 Options
@@ -49,6 +52,7 @@ Options
  %prio%             Priority in the (random) queue.
  %mtime%            Date and time of last file modification
  %mdate%            Date of last file modification
+ %audioformat%      The audio format of the song.
  ================== ======================================================
 
  The ``[]`` operator is used to group output such that if no metadata
@@ -86,6 +90,10 @@ Options
  first index of the range, END is the first index after the range
  (i.e. excluding).  START and END may be omitted, making the range
  open to that end.  Indexes start with zero.
+
+.. option:: --with-prio
+
+ Show only songs that have a non-zero priority.
 
 .. option:: -q, --quiet, --no-status
 

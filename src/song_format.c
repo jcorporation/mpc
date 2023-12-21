@@ -1,24 +1,8 @@
-/*
- * music player command (mpc)
- * Copyright 2003-2021 The Music Player Daemon Project
- * http://www.musicpd.org
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright The Music Player Daemon Project
 
 #include "song_format.h"
+#include "audio_format.h"
 #include "format.h"
 #include "charset.h"
 
@@ -89,6 +73,13 @@ song_value(const struct mpd_song *song, const char *name)
 		value = format_mtime(buffer, sizeof(buffer), song, "%c");
 	} else if (strcmp(name, "mdate") == 0) {
 		value = format_mtime(buffer, sizeof(buffer), song, "%x");
+	} else if (strcmp(name, "audioformat") == 0) {
+		const struct mpd_audio_format *audio_format = mpd_song_get_audio_format(song);
+		if (audio_format == NULL)
+			return NULL;
+
+		format_audio_format(buffer, sizeof(buffer), audio_format);
+		value = buffer;
 	} else {
 		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
 		if (tag_type == MPD_TAG_UNKNOWN)
