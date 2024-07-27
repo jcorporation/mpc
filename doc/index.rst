@@ -139,8 +139,9 @@ ins).
 Player Commands
 ^^^^^^^^^^^^^^^
 
-:command:`consume <on|off>` - Toggle consume mode if state (:samp:`on`
-   or :samp:`off`) is not specified.
+:command:`consume <on|once|off>` - Toggle consume mode if state (:samp:`on`
+   :samp:`once`, or :samp:`off`) is not specified.  :samp:`once` toggles
+   to :samp:`off`.
 
 :command:`crossfade [<seconds>]` - Gets and sets the current amount of
    crossfading between songs (:samp:`0` disables crossfading).
@@ -454,6 +455,7 @@ Other Commands
    ================== ======================================================
    %totaltime%        The total duration of the song.
    %currenttime%      The time that the client is currently at.
+   %currenttimems%    The time that the client is currently at, in milliseconds.
    %percenttime%      The percentage of time elapsed for the current song.
    %songpos%          The position of the current song within the playlist.
    %length%           The number of songs within the playlist
@@ -462,12 +464,13 @@ Other Commands
    %random%           Current status of random mode. 'on' or 'off'
    %repeat%           Current status of repeat mode. 'on' or 'off'
    %single%           Current status of single mode. 'on', 'once', or 'off'
-   %consume%          Current status of consume mode. 'on' or 'off'
+   %consume%          Current status of consume mode. 'on', 'once', or 'off'
    %kbitrate%         The bit rate in kbps for the current song.
    %audioformat%      The audio format which MPD is currently playing as 'samplerate:bits:channels'.
    %samplerate%       The sample rate in Hz extracted from the current MPD audio format.
    %bits%             The number of significant bits per sample size extracted from the current MPD audio format.
    %channels%         The number of channels extracted from the current MPD audio format.
+   %updateid%         The current MPD update ID. 0 if there is no update in progress.
 
    ================== ======================================================
 

@@ -50,6 +50,9 @@ status_value(const struct mpd_status *status, const char *name)
 	} else if (strcmp(name, "length") == 0) {
 		unsigned length = mpd_status_get_queue_length(status);
 		snprintf(buffer, sizeof(buffer), "%i", length);
+	} else if (strcmp(name, "currenttimems") == 0) {
+		unsigned elapsed_ms = mpd_status_get_elapsed_ms(status);
+		snprintf(buffer, sizeof(buffer), "%u", elapsed_ms);
 	} else if (strcmp(name, "currenttime") == 0) {
 		unsigned elasped = mpd_status_get_elapsed_time(status);
 		snprintf(buffer, sizeof(buffer), "%u:%02u",
@@ -89,11 +92,21 @@ status_value(const struct mpd_status *status, const char *name)
 			return "off";
 		}
 	} else if (strcmp(name, "consume") == 0) {
+#if LIBMPDCLIENT_CHECK_VERSION(2,21,0)
+		if (mpd_status_get_consume_state(status) == MPD_CONSUME_ON) {
+			return "on";
+		} else if (mpd_status_get_consume_state(status) == MPD_CONSUME_ONESHOT) {
+			return "once";
+		} else if (mpd_status_get_consume_state(status) == MPD_CONSUME_OFF) {
+			return "off";
+		}
+#else
 		if (mpd_status_get_consume(status)) {
 		    return "on";
 		} else {
 		    return "off";
 		}
+#endif
 	} else if (strcmp(name, "kbitrate") == 0) {
 		sprintf(buffer, "%u", mpd_status_get_kbit_rate(status));
 	} else if (strcmp(name, "audioformat") == 0) {
@@ -129,6 +142,9 @@ status_value(const struct mpd_status *status, const char *name)
 		} else {
 			return NULL;
 		}
+	} else if (strcmp(name, "updateid") == 0) {
+		unsigned update_id = mpd_status_get_update_id(status);
+		snprintf(buffer, sizeof(buffer), "%i", update_id);
 	}
 	else { return NULL; }
 	return buffer;
